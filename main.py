@@ -175,8 +175,8 @@ class PSO:
 
 # Global var
 objects = ['Television', 'Camera', 'Projector', 'Walkman', 'Radio', 'Mobile Phone', 'Laptop Computer']
-value = [35, 85, 135, 10, 25, 2, 94]
-weight = [2, 3, 9, 0.5, 2, 0.1, 4]
+value = [40, 85, 135, 10, 25, 2, 94]
+weight = [11, 3, 9, 0.5, 7, 0.5, 4]
 max_weight = 25
 
 # --- EXECUTE
