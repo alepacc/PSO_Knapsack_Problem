@@ -173,29 +173,6 @@ class PSO:
         plt.close()
 
 
-# # Global var
-# object = ['Television', 'Camera', 'Projector', 'Walkman', 'Radio', 'Mobile Phone', 'Laptop Computer']
-# value = [35, 85, 135, 10, 25, 2, 94]
-# weight = [2, 3, 9, 0.5, 2, 0.1, 4]
-# max_weight = 50
-#
-# # --- EXECUTE
-# print('[item_name: lower limit - upper limit] \n', sep='')
-# initial = []
-# bounds = []
-# for i in range(len(object)):
-#     initial.append(0)   # [x1, x2, ...]
-#     bounds.append(
-#         (initial[i], math.floor(max_weight / weight[i])))  # [(x1_min,x1_max),(x2_min,x2_max)...]
-#     print(object[i], ': ', bounds[i][0], '-', bounds[i][1], sep='')
-# print('\nThere are a total of ', len(object), ' variable...\n\n', sep='')
-#
-# #   (cost_func, x, bounds, num_particles, max_iter):
-# pso = PSO(maximize, initial, bounds, len(object), max_iter=20, verbose=True)
-# pso.Result()
-# pso.plot_result(file_name="pso_result")
-
-
 # -------- MAIN --------
 
 num = input("insert number from 1 to 10: ")
