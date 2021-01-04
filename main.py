@@ -47,7 +47,7 @@ class Particle:
 
         # create n(=num_dimensions) random particles
         for i in range(num_dimensions):
-            self.velocity.append(random.uniform(-1, 1))
+            self.velocity.append(random.uniform(0, 1))  # random.uniform(-1, 1)
             self.position.append(x[i])
 
     # evaluate current fitness
@@ -61,7 +61,7 @@ class Particle:
 
     def update_velocity(self, global_best):
         w = 0.9  # constant inertia weight (how much to weigh the previous velocity)
-        c1 = 1.9  # cognitive constant (particle)
+        c1 = 1  # cognitive constant (particle)
         c2 = 1.9  # social constant (swarm)
 
         for i in range(num_dimensions):  # process each particle
@@ -74,16 +74,14 @@ class Particle:
 
     def update_position(self, bounds):
         for i in range(num_dimensions):  # process each particle
-            # max_bounds = (bounds[i][1] - bounds[i][0])
-
             # If velocity is too high, the particle can fly over the best value,
             # if is too low, the particle can’t make enough exploration. Velocity falls into the local optimum.
-
+            max_bounds = (bounds[i][1] - bounds[i][0])
             # limit the range of current velocity
-            # if self.velocity[i] < -max_bounds:
-            #     self.velocity[i] = -max_bounds
-            # elif self.velocity[i] > max_bounds:
-            #     self.velocity[i] = max_bounds
+            if self.velocity[i] < -max_bounds:
+                self.velocity[i] = -max_bounds
+            elif self.velocity[i] > max_bounds:
+                self.velocity[i] = max_bounds
 
             # compute new position using new velocity
             self.position[i] += self.velocity[i]
@@ -106,7 +104,7 @@ class PSO:
     def __init__(self, cost_func, x, bounds, num_particles, max_iter, verbose=False):
         global num_dimensions
 
-        num_dimensions = len(x)
+        num_dimensions = len(x)  # numbers of items
         self.err_global_best = -1  # best error for group
         self.global_best = []  # best position for group
 
@@ -145,7 +143,6 @@ class PSO:
 
             if verbose:
                 print(f'iter: {iteration:>4d}, global best solution: {self.global_best}')
-
             iteration += 1
 
     # -------- result --------
@@ -199,7 +196,7 @@ class PSO:
 
 num = input("insert number from 1 to 10: ")
 # print('profit, weight')
-dataset = t.data(False, int(num) - 1)
+dataset = t.data(True, int(num) - 1)
 value = []
 weight = []
 for i in dataset:
@@ -224,15 +221,20 @@ elif repetition == "n":
     repetition = False
 if not isinstance(repetition, bool):
     print("error bool")
+
+# initial position of particles  if rand(0,1)<0.5 --> x=0  else x=1
+# for i in range(len(weight)):
+#     initial.append(round(random.uniform(0, 1)))  # [x1, x2, ...]
+
 if repetition:
     for i in range(len(weight)):
-        initial.append(0)  # [x1, x2, ...]
+        initial.append(0)
         bounds.append((initial[i], math.floor(max_weight / weight[i])))  # [(x1_min,x1_max),(x2_min,x2_max)...]
         print('object', i, ': ', bounds[i][0], '-', bounds[i][1], sep='')
 else:
     no_rep = [1 for i in range(length)]
     for i in range(len(weight)):
-        initial.append(0)  # [x1, x2, ...]
+        initial.append(0)
         bounds.append((initial[i], no_rep[i]))
         # print('object', i, ': ', bounds[i][0], '-', bounds[i][1], sep='')
 
