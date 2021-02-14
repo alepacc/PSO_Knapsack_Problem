@@ -1,4 +1,4 @@
-def data(low=True, num=0):
+def data(num=0, low=True):
     """
     :param low:(default=True) choose low dimensional instance, False coose large scale dimensional istance
     :param num: number (1 to 10) of the chosen instance
@@ -6,7 +6,7 @@ def data(low=True, num=0):
     """
     path = "instances_01_KP"
     low_dim = ['f1_l-d_kp_10_269', 'f2_l-d_kp_20_878', 'f3_l-d_kp_4_20', 'f4_l-d_kp_4_11', 'f5_l-d_kp_15_375',
-               'f6_l-d_kp_10_60', 'f7_l-d_kp_7_50', 'f8_l-d_kp_23_10000', 'f9_l-d_kp_5_80', 'f10_l-d_kp_20_879']
+               'f6_l-d_kp_10_60', 'f7_l-d_kp_7_50', 'f8_l-d_kp_23_10000', 'f9_l-d_kp_5_80', 'f10_l-d_kp_20_879', "f11_l-d_kp_40_990"]
     large_scale = [
         "knapPI_1_100_1000_1",
         "knapPI_1_200_1000_1",
@@ -55,5 +55,5 @@ def data(low=True, num=0):
         print("Error:", err)
     finally:
         fp.close()
-        fp_opt.close()
+#        fp_opt.close()
     return dataset
