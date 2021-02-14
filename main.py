@@ -73,10 +73,11 @@ class Particle:
             self.personal_best = self.position
             self.err_personal_best = self.err_personal
 
-    def update_velocity(self, global_best):
-        w = 0.9  # constant inertia weight (how much to weigh the previous velocity)
-        c1 = 1.2  # cognitive constant (particle)
-        c2 = 1.9  # social constant (swarm)
+    def update_velocity(self, global_best, decr):
+        global w, c1, c2
+        w = 0.9  # round(0.9-decr, 1)  # constant inertia weight (how much to weigh the previous velocity)
+        c1 = 1.49  # cognitive constant (particle)
+        c2 = 1.49  # social constant (swarm)
 
         for i in range(num_dimensions):  # process each particle
             r1 = random.random()
@@ -85,6 +86,7 @@ class Particle:
             cognitive = c1 * r1 * (self.personal_best[i] - self.position[i])
             social = c2 * r2 * (global_best[i] - self.position[i])
             self.velocity[i] = w * self.velocity[i] + cognitive + social
+        
 
     def update_position(self, bounds, type_pso):
         for i in range(num_dimensions):  # process each particle
@@ -92,12 +94,13 @@ class Particle:
                 # _________ BPSO _______#
                 # If velocity is too high, the particle can fly over the best value,
                 # if is too low, the particle can’t make enough exploration. Velocity falls into the local optimum.
-                max_bounds = (bounds[i][1] - bounds[i][0])
+                vel_max = 4   # velocity [-4, 4]
+                # vel_max = (bounds[i][1] - bounds[i][0])
                 # limit the range of current velocity
-                if self.velocity[i] < -max_bounds:
-                    self.velocity[i] = -max_bounds
-                elif self.velocity[i] > max_bounds:
-                    self.velocity[i] = max_bounds
+                if self.velocity[i] < -vel_max:
+                    self.velocity[i] = -vel_max
+                elif self.velocity[i] > vel_max:
+                    self.velocity[i] = vel_max
 
                 # compute new position using new velocity
                 self.position[i] += self.velocity[i]
@@ -151,9 +154,8 @@ class PSO:
 
         # begin optimization loop
         iteration = 0
-        cnt_global_best = 0  # TODO: 10 iter
-        while iteration < max_iter:  # and cnt_global_best != 10:
-            global_best_prev = self.global_best  # save previus global best
+        while iteration < max_iter:
+            decr = round(0.9/max_iter*iteration, 1)  # linear decrese inertia w (LDIW) from 0.9 -> 0.0
 
             #  evaluate fitness of particles in swarm
             for j in range(num_particles):
@@ -164,13 +166,9 @@ class PSO:
                     self.global_best = list(swarm[j].position)
                     self.err_global_best = float(swarm[j].err_personal)
 
-            # if global best doesn't change after 10 times, the iteration terminate
-            if global_best_prev == self.global_best:
-                cnt_global_best += 1
-
             # update velocities and position
             for j in range(num_particles):
-                swarm[j].update_velocity(self.global_best)
+                swarm[j].update_velocity(self.global_best, decr)
                 swarm[j].update_position(bounds, type_pso)
 
             total_profit = 0
@@ -212,11 +210,12 @@ class PSO:
             else:
                 x2.append(self.step_weight[i])
                 y2.append(self.step_profit[i])
-        plt.plot(x1, y1, label="PSO")
-        plt.plot(x2, y2, label="BPSO")
+        plt.plot(x1, y1, linestyle='-',  label="PSO")
+        plt.plot(x2, y2, linestyle='--', label="BPSO")
         plt.xlabel('Weight')
         plt.ylabel('Profit')
-        plt.title('PSO vs BPSO')
+        plt.suptitle('PSO vs BPSO', fontsize=18)
+        plt.title('c1 = '+str(c1)+', c2 = '+str(c2)+', w = '+str(w))
         plt.legend()
         plt.grid(True)
         save_img_plot(file_name)
@@ -230,11 +229,13 @@ class PSO:
             else:
                 x2.append(self.iterations[i])
                 y2.append(self.fitness[i])
-        plt.plot(x1, y1, label="PSO")
-        plt.plot(x2, y2, label="BPSO")
+        plt.plot(x1, y1, linestyle='-',  label="PSO")
+        plt.plot(x2, y2, linestyle='--', label="BPSO")
+        plt.xscale('symlog')
         plt.xlabel('iterations')
         plt.ylabel('fitness')
-        plt.title('Evolution of solutions')
+        plt.suptitle('Evolution of solutions', fontsize=18)
+        plt.title('c1 = '+str(c1)+', c2 = '+str(c2)+', w = '+str(w))
         plt.legend()
         plt.grid(True)
         save_img_plot(file_name)
@@ -245,7 +246,7 @@ def main():
     global value, weight, max_weight, obj_num, optimum
     num = input("insert number from 1 to 10: ")
     # print('profit, weight')
-    dataset = d.data(True, int(num) - 1)
+    dataset = d.data(int(num) - 1, low=True)
     value = []
     weight = []
 
@@ -265,13 +266,16 @@ def main():
     bounds = []
     length = len(value)
 
-    choice = input("Knapsack 0-1 (y/n)?: ").lower()
-    if choice == "y":
-        choice = True
-    elif choice == "n":  # Knapsack with items repetitions
-        choice = False
-    if not isinstance(choice, bool):
-        print("error bool")
+    try:
+        choice = input("Knapsack 0-1 (y/n)?: ").lower()
+        if choice == "y":
+            choice = True
+        elif choice == "n":  # Knapsack with items repetitions
+            choice = False
+        if not isinstance(choice, bool):
+            print("error bool")
+    except ValueError:
+        print("Input error!")
 
     if not choice:
         print('\n[lower limit - upper limit]')
@@ -290,8 +294,11 @@ def main():
 
     print('There are a total of', length, 'variable...\n')
 
-    max_iter = int(input("Insert max of iteration: "))
-    num_particles = int(input("Insert number of particles: "))
+    try:
+        max_iter = int(input("Insert max of iteration: "))
+        num_particles = int(input("Insert number of particles: "))
+    except ValueError:
+        print("Input error!")
 
     print('-' * 20, '\n# obj: ', obj_num, '\nmax weight: ', max_weight, '\noptimum profit to achieve: ', optimum)
     print('-' * 20, '\nFINAL RESULTS:')
@@ -302,9 +309,9 @@ def main():
     # pso.plot_result(file_name="pso_result")
     # pso.plot_evolution(file_name="pso_evolution")
 
-    pso = PSO(maximize, initial, bounds, num_particles, max_iter, "BPSO", False)
+    bpso = PSO(maximize, initial, bounds, num_particles, max_iter, "BPSO", False)
     print('_' * 10, 'BPSO', '_' * 10, sep='')
-    pso.result()
+    bpso.result()
 
     pso.plot_result(file_name="result")
     pso.plot_evolution(file_name="evolution")
@@ -312,5 +319,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-# TODO: large_scale
-# TODO: fix plotting
