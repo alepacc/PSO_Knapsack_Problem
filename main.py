@@ -31,7 +31,6 @@ def profit(items):
         total_profit += items[_] * value[_]  # x * value
     return total_profit
 
-# todo: dataset 3, choice that exceed weight--> [0, 1, 1, 1] [1, 0, 1, 1]
 # If total weight exceeds max_weight
 def check_weight(items, element):
     total_weight = 0
@@ -39,10 +38,6 @@ def check_weight(items, element):
         total_weight += items[_] * weight[_]
 
     if total_weight <= max_weight:
-        # if total_weight <= element:  # TODO: confronto peso profitto??
-        #     return element - total_weight
-        # else:
-        #     return 0
         return element
     else:
         return -element
@@ -61,7 +56,7 @@ class Particle:
         self.err_personal_best = -1  # best error individual
         self.err_personal = -1  # error individual
 
-        self.decrease = decrease  #todo: bool value for choice of linear decreasing w
+        self.decrease = decrease
 
         # create n(=num_items) random particles
         for _ in range(num_items):
@@ -273,7 +268,7 @@ def main():
     num = input("insert number from 1 to 10: ")
 
     # choose type of dataset (low dimension OR large)
-    dataset = d.data(int(num) - 1, low=True)   # todo: fix exe large dataset
+    dataset = d.data(int(num) - 1, low=True)
     value = []
     weight = []
 
@@ -346,17 +341,7 @@ def main():
     pso.plot_result(file_name="result")
     pso.plot_evolution(file_name="evolution")
 
-    # n = input("ins num: ")
-    # dir = "/Users/alessio/Desktop/PSO/img"
-    # shutil.copy("result.png", dir)
-    # shutil.copy("evolution.png", dir)
-    # dest_res = os.path.join(dir, "result.png")
-    # new_dest_res = os.path.join(dir, n+"_result.png")
-    # os.rename(dest_res, new_dest_res)
-    #
-    # dest_ev = os.path.join(dir, "evolution.png")
-    # new_dest_ev = os.path.join(dir, n+"_evolution.png")
-    # os.rename(dest_ev, new_dest_ev)
+
 
 
 if __name__ == '__main__':
