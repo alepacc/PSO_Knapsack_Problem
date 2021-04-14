@@ -4,8 +4,6 @@ The knapsack problem consists in finding the maximum profit in the choice of the
 Compare three solution with Particle Swarm Optimization, Binary PSO and linear decreasing inertia weight (LDIW-PSO)
 
 
-![screen_0](/result.png)
-![screen_1](/evolution.png)
-
-
-
+<img src="program_execution.png" width="450" title="hover text" style="align:center">
+<img src="result.png" width="450" title="hover text">
+<img src="evolution.png" width="450" title="hover text">
