@@ -18,9 +18,9 @@ def save_img_plot(file_name):
 
 # -------- COST FUNCTION --------
 # function to optimize (maximize profit)
-def maximize(items):
+def maximize(items):       # items = particle position
     total_profit = profit(items)
-    return total_profit + check_weight(items, total_profit)
+    return check_weight(items, total_profit)
 
 
 # The function trying to maximize
@@ -40,7 +40,7 @@ def check_weight(items, total_profit):
     if total_weight <= max_weight:
         return total_profit
     else:
-        return -total_profit
+        return 0
 
 
 # -------- PARTICLE --------
@@ -169,7 +169,7 @@ class PSO:
                     self.fit_global_best = float(swarm[j].fit_current)
 
             if decrease:
-                decr = round(0.9 / max_iter * iteration, 1)  # linear decrease inertia w (LDIW) from 0.9 -> 0.0
+                decr = round(0.9 / max_iter * iteration, 1)  # linear decreasing inertia w (LDIW) from 0.9 -> 0.0
             else:
                 decr = 0  # zero for not decreasing w
 
